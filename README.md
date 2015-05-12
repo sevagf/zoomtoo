@@ -7,13 +7,13 @@ ZoomToo is a jQuery plugin to show case your images with a magnifying lens when 
 1. Include jQuery:
 
 	```html
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 	```
 
 2. Include ZoomToo code:
 
 	```html
-	<script src="dist/jquery.zoomtoo.min.js"></script>
+	<script src="dist/jquery.zoomtoo.js"></script>
 	```
 
 3. Call the plugin:
@@ -24,9 +24,15 @@ ZoomToo is a jQuery plugin to show case your images with a magnifying lens when 
 	});
 	```
 
+This plugin is also registered under http://bower.io/ to simplify integration. Try:
+
+    npm install -g bower
+    bower install zoomtoo
+
+
 ## Compatibility
 
-jQuery Mask Plugin has been tested with jQuery 1.7+ on all major browsers:
+jQuery Mask Plugin has been tested with jQuery 1.7.1 on all major browsers:
 
  * Firefox 2+ (Win, Mac, Linux);
  * IE7+ (Win);

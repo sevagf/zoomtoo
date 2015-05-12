@@ -4,8 +4,11 @@
   "description": "Showcase your images with a magnifying lens on hover",
   "keywords": [
 	"jquery",
+	"plugin",
 	"zoomtoo",
-	"plugins"
+	"zoom",
+	"image",
+	"hover"
   ],
   "version": "0.9.0",
   "author": {
@@ -31,6 +34,6 @@
   "docs": "https://github.com/sevagf/zoomtoo#readme",
   "download": "https://github.com/sevagf/zoomtoo/archive/master.zip",
   "dependencies": {
-	  "jquery": ">=1.7"
+	"jquery": ">=1.7.1"
   }
 }
