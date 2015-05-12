@@ -46,6 +46,9 @@
         };
         this.moveImageTimer = 0;
         this.continueSlowMove = false;
+        this.prepareElements();
+      },
+      prepareElements: function() {
         $(this.img).css({
           position: "absolute",
           top: 0,

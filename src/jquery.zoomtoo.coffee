@@ -41,6 +41,11 @@
 				top: 0
 			@moveImageTimer = 0
 			@continueSlowMove = false
+			@prepareElements()
+
+			return
+
+		prepareElements: ->
 			$(@img).css(
 				position: "absolute"
 				top: 0
@@ -55,6 +60,7 @@
 				.on("mouseenter.zoomtoo", $.proxy(@mouseEnter, @))
 				.on("mouseleave.zoomtoo", $.proxy(@mouseLeave, @))
 				.on "mousemove.zoomtoo", $.proxy(@mouseMove, @)
+
 			return
 
 		destroy: ->
