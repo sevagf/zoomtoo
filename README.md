@@ -45,7 +45,3 @@ Check [Releases](https://github.com/sevagf/zoomtoo/releases) for detailed change
 ## License
 
 [MIT License](http://sevagf.mit-license.org/) © Sevag Frankian
-
-## Authors
-
-* [Sevag Frankian](https://github.com/sevagf)
