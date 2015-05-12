@@ -16,10 +16,18 @@ ZoomToo is a jQuery plugin to show case your images with a magnifying lens when 
 	<script src="dist/jquery.zoomtoo.js"></script>
 	```
 
-3. Call the plugin:
+3. Markup the container element:
+
+	```html
+	<div id="#frame">
+		<img src="low_res.jpg" data-src="high_res.jpg" />
+	</div>
+	```
+
+4. Call the plugin:
 
 	```javascript
-	$("#element").zoomtoo({
+	$("#frame").zoomtoo({
 		magnify: 1
 	});
 	```
