@@ -6,11 +6,26 @@
 	"Sevag Frankian <sevagf@gmail.com>"
   ],
   "description": "Showcase your images with a magnifying lens on hover",
-  "main": "src/jquery.zoomtoo.js",
+  "main": [
+	"dist/jquery.zoomtoo.js",
+	"dist/jquery.zoomtoo.min.js"
+  ],
   "keywords": [
 	"jquery",
 	"plugin",
 	"zoomtoo"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "private": false,
+  "ignore": [
+	"**/.*",
+	"CONTRIBUTING.md",
+	"Gruntfile.js",
+	"package.json",
+	"demo",
+	"zoomtoo.jquery.json"
+  ],
+  "dependencies": {
+	"jquery": ">= 1.7.1"
+  }
 }
