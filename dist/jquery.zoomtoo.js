@@ -2,10 +2,8 @@
   (function($) {
     var ZoomToo;
     ZoomToo = function(element, options) {
-      var zoomToo;
-      zoomToo = this;
-      zoomToo.element = element;
-      zoomToo.load(options);
+      this.element = element;
+      this.load(options);
     };
     ZoomToo.defaults = {
       showDuration: 500,
@@ -16,70 +14,65 @@
     };
     ZoomToo.prototype = {
       load: function(options) {
-        var img_src, nestedImage, zoomToo;
-        zoomToo = this;
-        nestedImage = zoomToo.element.find("img").first();
+        var img_src, nestedImage;
+        nestedImage = this.element.find("img").first();
         img_src = nestedImage.data("src");
-        zoomToo.element.one("zoomtoo.destroy", $.proxy(zoomToo.destroy, zoomToo));
+        this.element.one("zoomtoo.destroy", $.proxy(this.destroy, this));
         if (!img_src) {
           return;
         }
-        zoomToo.img = new Image();
-        zoomToo.img.src = img_src;
-        zoomToo.img.onload = $.proxy(zoomToo.init, zoomToo, options);
+        this.img = new Image();
+        this.img.src = img_src;
+        this.img.onload = $.proxy(this.init, this, options);
       },
       init: function(options) {
-        var position, zoomToo;
-        zoomToo = this;
-        position = zoomToo.element.css("position");
-        zoomToo.settings = $.extend({}, ZoomToo.defaults, options);
-        zoomToo.element.get(0).style.position = /(absolute|fixed)/.test(position) ? position : "relative";
-        zoomToo.element.get(0).style.overflow = "hidden";
-        zoomToo.elementWidth = zoomToo.element.outerWidth();
-        zoomToo.elementHeight = zoomToo.element.outerHeight();
-        zoomToo.imgWidth = zoomToo.img.width * zoomToo.settings.magnify;
-        zoomToo.imgHeight = zoomToo.img.height * zoomToo.settings.magnify;
-        zoomToo.elementOffset = zoomToo.element.offset();
-        zoomToo.newZoom = {
+        var position;
+        position = this.element.css("position");
+        this.settings = $.extend({}, ZoomToo.defaults, options);
+        this.element.get(0).style.position = /(absolute|fixed)/.test(position) ? position : "relative";
+        this.element.get(0).style.overflow = "hidden";
+        this.elementWidth = this.element.outerWidth();
+        this.elementHeight = this.element.outerHeight();
+        this.imgWidth = this.img.width * this.settings.magnify;
+        this.imgHeight = this.img.height * this.settings.magnify;
+        this.elementOffset = this.element.offset();
+        this.newZoom = {
           left: 0,
           top: 0
         };
-        zoomToo.currentZoom = {
+        this.currentZoom = {
           left: 0,
           top: 0
         };
-        zoomToo.moveImageTimer = 0;
-        zoomToo.continueSlowMove = false;
-        $(zoomToo.img).css({
+        this.moveImageTimer = 0;
+        this.continueSlowMove = false;
+        $(this.img).css({
           position: "absolute",
           top: 0,
           left: 0,
           opacity: 0,
-          width: zoomToo.imgWidth,
-          height: zoomToo.imgHeight,
+          width: this.imgWidth,
+          height: this.imgHeight,
           border: "none",
           maxWidth: "none",
           maxHeight: "none"
-        }).appendTo(zoomToo.element);
-        zoomToo.element.css({
+        }).appendTo(this.element);
+        this.element.css({
           cursor: "crosshair"
-        }).on("mouseenter.zoomtoo", $.proxy(zoomToo.mouseEnter, zoomToo)).on("mouseleave.zoomtoo", $.proxy(zoomToo.mouseLeave, zoomToo)).on("mousemove.zoomtoo", $.proxy(zoomToo.mouseMove, zoomToo));
+        }).on("mouseenter.zoomtoo", $.proxy(this.mouseEnter, this)).on("mouseleave.zoomtoo", $.proxy(this.mouseLeave, this)).on("mousemove.zoomtoo", $.proxy(this.mouseMove, this));
       },
       destroy: function() {
-        var zoomToo;
-        zoomToo = this;
-        zoomToo.cancelTimer();
-        zoomToo.element.off();
-        $(zoomToo.img).remove();
-        zoomToo.element.removeData("zoomtoo");
+        this.cancelTimer();
+        this.element.off();
+        $(this.img).remove();
+        this.element.removeData("zoomtoo");
       },
       calculateOffset: function(currentMousePos) {
-        var adjustedHeight, adjustedWidth, currentMouseOffsetX, currentMouseOffsetY, deltaHeight, deltaWidth, halfLensHeight, halfLensWidth, lensBottom, lensLeft, lensRight, lensTop, zoomLeft, zoomToo, zoomTop;
-        zoomToo = this;
-        currentMouseOffsetX = currentMousePos.x - zoomToo.elementOffset.left;
-        currentMouseOffsetY = currentMousePos.y - zoomToo.elementOffset.top;
-        halfLensHeight = Math.round(zoomToo.settings.lensHeight / 2);
-        halfLensWidth = Math.round(zoomToo.settings.lensWidth / 2);
+        var adjustedHeight, adjustedWidth, currentMouseOffsetX, currentMouseOffsetY, deltaHeight, deltaWidth, halfLensHeight, halfLensWidth, lensBottom, lensLeft, lensRight, lensTop, zoomLeft, zoomTop;
+        currentMouseOffsetX = currentMousePos.x - this.elementOffset.left;
+        currentMouseOffsetY = currentMousePos.y - this.elementOffset.top;
+        halfLensHeight = Math.round(this.settings.lensHeight / 2);
+        halfLensWidth = Math.round(this.settings.lensWidth / 2);
         lensTop = currentMouseOffsetY - halfLensHeight;
         lensBottom = currentMouseOffsetY + halfLensHeight;
         lensLeft = currentMouseOffsetX - halfLensWidth;
@@ -87,68 +80,59 @@
         if (lensTop < 0) {
           currentMouseOffsetY = halfLensHeight;
         }
-        if (lensBottom > zoomToo.elementHeight) {
-          currentMouseOffsetY = zoomToo.elementHeight - halfLensHeight;
+        if (lensBottom > this.elementHeight) {
+          currentMouseOffsetY = this.elementHeight - halfLensHeight;
         }
         if (lensLeft < 0) {
           currentMouseOffsetX = halfLensWidth;
         }
-        if (lensRight > zoomToo.elementWidth) {
-          currentMouseOffsetX = zoomToo.elementWidth - halfLensWidth;
+        if (lensRight > this.elementWidth) {
+          currentMouseOffsetX = this.elementWidth - halfLensWidth;
         }
-        deltaHeight = zoomToo.imgHeight - zoomToo.elementHeight;
-        adjustedHeight = zoomToo.elementHeight - zoomToo.settings.lensHeight;
-        deltaWidth = zoomToo.imgWidth - zoomToo.elementWidth;
-        adjustedWidth = zoomToo.elementWidth - zoomToo.settings.lensWidth;
+        deltaHeight = this.imgHeight - this.elementHeight;
+        adjustedHeight = this.elementHeight - this.settings.lensHeight;
+        deltaWidth = this.imgWidth - this.elementWidth;
+        adjustedWidth = this.elementWidth - this.settings.lensWidth;
         zoomTop = -deltaHeight / adjustedHeight * (currentMouseOffsetY - halfLensHeight);
         zoomLeft = -deltaWidth / adjustedWidth * (currentMouseOffsetX - halfLensWidth);
-        zoomToo.newZoom.left = zoomLeft;
-        zoomToo.newZoom.top = zoomTop;
+        this.newZoom.left = zoomLeft;
+        this.newZoom.top = zoomTop;
       },
       cancelTimer: function() {
-        var zoomToo;
-        zoomToo = this;
-        clearTimeout(zoomToo.moveImageTimer);
+        clearTimeout(this.moveImageTimer);
       },
       stopSlowMoveImage: function() {
-        var zoomToo;
-        zoomToo = this;
-        zoomToo.continueSlowMove = false;
+        this.continueSlowMove = false;
       },
       mouseLeave: function() {
-        var zoomToo;
-        zoomToo = this;
-        $(zoomToo.img).stop().fadeTo(zoomToo.settings.showDuration, 0).promise().done(zoomToo.stopSlowMoveImage);
+        $(this.img).stop().fadeTo(this.settings.showDuration, 0).promise().done(this.stopSlowMoveImage);
       },
       mouseEnter: function(e) {
-        var currentMousePos, zoomToo;
-        zoomToo = this;
+        var currentMousePos;
         currentMousePos = {
           x: e.pageX,
           y: e.pageY
         };
-        zoomToo.calculateOffset(currentMousePos);
-        zoomToo.continueSlowMove = true;
-        zoomToo.currentZoom.top = zoomToo.newZoom.top;
-        zoomToo.currentZoom.left = zoomToo.newZoom.left;
-        zoomToo.moveImage();
-        $(zoomToo.img).stop().fadeTo(zoomToo.settings.showDuration, 1);
+        this.calculateOffset(currentMousePos);
+        this.continueSlowMove = true;
+        this.currentZoom.top = this.newZoom.top;
+        this.currentZoom.left = this.newZoom.left;
+        this.moveImage();
+        $(this.img).stop().fadeTo(this.settings.showDuration, 1);
       },
       mouseMove: function(e) {
-        var currentMousePos, zoomToo;
-        zoomToo = this;
+        var currentMousePos;
         currentMousePos = {
           x: e.pageX,
           y: e.pageY
         };
-        zoomToo.calculateOffset(currentMousePos);
-        zoomToo.cancelTimer();
-        zoomToo.continueSlowMove = true;
-        zoomToo.slowMoveImage();
+        this.calculateOffset(currentMousePos);
+        this.cancelTimer();
+        this.continueSlowMove = true;
+        this.slowMoveImage();
       },
       slowMoveImage: function() {
-        var delta, moveZoomPos, reachedLeft, reachedTop, zoomToo;
-        zoomToo = this;
+        var delta, moveZoomPos, reachedLeft, reachedTop;
         delta = {
           left: 0,
           top: 0
@@ -159,33 +143,31 @@
         };
         reachedLeft = false;
         reachedTop = false;
-        delta.left = zoomToo.newZoom.left - zoomToo.currentZoom.left;
-        delta.top = zoomToo.newZoom.top - zoomToo.currentZoom.top;
-        moveZoomPos.left = -delta.left / (zoomToo.settings.moveDuration / 100);
-        moveZoomPos.top = -delta.top / (zoomToo.settings.moveDuration / 100);
-        zoomToo.currentZoom.left = zoomToo.currentZoom.left - moveZoomPos.left;
-        zoomToo.currentZoom.top = zoomToo.currentZoom.top - moveZoomPos.top;
+        delta.left = this.newZoom.left - this.currentZoom.left;
+        delta.top = this.newZoom.top - this.currentZoom.top;
+        moveZoomPos.left = -delta.left / (this.settings.moveDuration / 100);
+        moveZoomPos.top = -delta.top / (this.settings.moveDuration / 100);
+        this.currentZoom.left = this.currentZoom.left - moveZoomPos.left;
+        this.currentZoom.top = this.currentZoom.top - moveZoomPos.top;
         if (Math.abs(delta.left) < 1) {
-          zoomToo.currentZoom.left = zoomToo.newZoom.left;
+          this.currentZoom.left = this.newZoom.left;
           reachedLeft = true;
         }
         if (Math.abs(delta.top) < 1) {
-          zoomToo.currentZoom.top = zoomToo.newZoom.top;
+          this.currentZoom.top = this.newZoom.top;
           reachedTop = true;
         }
-        zoomToo.moveImage();
+        this.moveImage();
         if (reachedLeft && reachedTop) {
-          zoomToo.continueSlowMove = false;
+          this.continueSlowMove = false;
         }
-        if (zoomToo.continueSlowMove === true) {
-          zoomToo.moveImageTimer = setTimeout($.proxy(zoomToo.slowMoveImage, zoomToo), 25);
+        if (this.continueSlowMove === true) {
+          this.moveImageTimer = setTimeout($.proxy(this.slowMoveImage, this), 25);
         }
       },
       moveImage: function() {
-        var zoomToo;
-        zoomToo = this;
-        zoomToo.img.style.left = zoomToo.currentZoom.left + "px";
-        zoomToo.img.style.top = zoomToo.currentZoom.top + "px";
+        this.img.style.left = this.currentZoom.left + "px";
+        this.img.style.top = this.currentZoom.top + "px";
       }
     };
     $.fn.zoomToo = function(options) {

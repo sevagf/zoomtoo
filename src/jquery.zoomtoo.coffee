@@ -1,9 +1,8 @@
 (($) ->
 
 	ZoomToo = (element, options) ->
-		zoomToo = this
-		zoomToo.element = element
-		zoomToo.load(options)
+		@element = element
+		@load(options)
 		return
 
 	ZoomToo.defaults =
@@ -15,68 +14,64 @@
 
 	ZoomToo.prototype =
 		load: (options) ->
-			zoomToo = this
-			nestedImage = zoomToo.element.find("img").first()
+			nestedImage = @element.find("img").first()
 			img_src = nestedImage.data("src")
-			zoomToo.element.one "zoomtoo.destroy", $.proxy(zoomToo.destroy, zoomToo)
+			@element.one "zoomtoo.destroy", $.proxy(@destroy, @)
 			return unless img_src
-			zoomToo.img = new Image()
-			zoomToo.img.src = img_src
-			zoomToo.img.onload = $.proxy(zoomToo.init, zoomToo, options)
+			@img = new Image()
+			@img.src = img_src
+			@img.onload = $.proxy(@init, @, options)
 			return
 
 		init: (options) ->
-			zoomToo = this
-			position = zoomToo.element.css("position")
-
-			zoomToo.settings = $.extend({}, ZoomToo.defaults, options)
-			zoomToo.element.get(0).style.position = if /(absolute|fixed)/.test(position) then position else "relative"
-			zoomToo.element.get(0).style.overflow = "hidden"
-			zoomToo.elementWidth = zoomToo.element.outerWidth()
-			zoomToo.elementHeight = zoomToo.element.outerHeight()
-			zoomToo.imgWidth = zoomToo.img.width * zoomToo.settings.magnify
-			zoomToo.imgHeight = zoomToo.img.height * zoomToo.settings.magnify
-			zoomToo.elementOffset = zoomToo.element.offset()
-			zoomToo.newZoom =
+			position = @element.css("position")
+			@settings = $.extend({}, ZoomToo.defaults, options)
+			@element.get(0).style.position = if /(absolute|fixed)/.test(position) then position else "relative"
+			@element.get(0).style.overflow = "hidden"
+			@elementWidth = @element.outerWidth()
+			@elementHeight = @element.outerHeight()
+			@imgWidth = @img.width * @settings.magnify
+			@imgHeight = @img.height * @settings.magnify
+			@elementOffset = @element.offset()
+			@newZoom =
 				left: 0
 				top: 0
-			zoomToo.currentZoom =
+			@currentZoom =
 				left: 0
 				top: 0
-			zoomToo.moveImageTimer = 0
-			zoomToo.continueSlowMove = false
-			$(zoomToo.img).css(
+			@moveImageTimer = 0
+			@continueSlowMove = false
+			$(@img).css(
 				position: "absolute"
 				top: 0
 				left: 0
 				opacity: 0
-				width: zoomToo.imgWidth
-				height: zoomToo.imgHeight
+				width: @imgWidth
+				height: @imgHeight
 				border: "none"
 				maxWidth: "none"
-				maxHeight: "none").appendTo zoomToo.element
-			zoomToo.element.css(cursor: "crosshair").on("mouseenter.zoomtoo", $.proxy(zoomToo.mouseEnter, zoomToo)).on("mouseleave.zoomtoo", $.proxy(zoomToo.mouseLeave, zoomToo)).on "mousemove.zoomtoo", $.proxy(zoomToo.mouseMove, zoomToo)
+				maxHeight: "none").appendTo @element
+			@element.css(cursor: "crosshair")
+				.on("mouseenter.zoomtoo", $.proxy(@mouseEnter, @))
+				.on("mouseleave.zoomtoo", $.proxy(@mouseLeave, @))
+				.on "mousemove.zoomtoo", $.proxy(@mouseMove, @)
 			return
 
 		destroy: ->
-			zoomToo = this
+			@cancelTimer()
+			@element.off()
 
-			zoomToo.cancelTimer()
-			zoomToo.element.off()
-
-			$(zoomToo.img).remove()
-			zoomToo.element.removeData "zoomtoo"
+			$(@img).remove()
+			@element.removeData "zoomtoo"
 
 			return
 
 		calculateOffset: (currentMousePos) ->
-			zoomToo = this
+			currentMouseOffsetX = currentMousePos.x - (@elementOffset.left)
+			currentMouseOffsetY = currentMousePos.y - (@elementOffset.top)
 
-			currentMouseOffsetX = currentMousePos.x - (zoomToo.elementOffset.left)
-			currentMouseOffsetY = currentMousePos.y - (zoomToo.elementOffset.top)
-
-			halfLensHeight = Math.round(zoomToo.settings.lensHeight / 2)
-			halfLensWidth = Math.round(zoomToo.settings.lensWidth / 2)
+			halfLensHeight = Math.round(@settings.lensHeight / 2)
+			halfLensWidth = Math.round(@settings.lensWidth / 2)
 
 			lensTop = currentMouseOffsetY - halfLensHeight
 			lensBottom = currentMouseOffsetY + halfLensHeight
@@ -86,70 +81,64 @@
 			if lensTop < 0
 				currentMouseOffsetY = halfLensHeight
 
-			if lensBottom > zoomToo.elementHeight
-				currentMouseOffsetY = zoomToo.elementHeight - halfLensHeight
+			if lensBottom > @elementHeight
+				currentMouseOffsetY = @elementHeight - halfLensHeight
 
 			if lensLeft < 0
 				currentMouseOffsetX = halfLensWidth
 
-			if lensRight > zoomToo.elementWidth
-				currentMouseOffsetX = zoomToo.elementWidth - halfLensWidth
+			if lensRight > @elementWidth
+				currentMouseOffsetX = @elementWidth - halfLensWidth
 
-			deltaHeight = zoomToo.imgHeight - (zoomToo.elementHeight)
-			adjustedHeight = zoomToo.elementHeight - (zoomToo.settings.lensHeight)
+			deltaHeight = @imgHeight - (@elementHeight)
+			adjustedHeight = @elementHeight - (@settings.lensHeight)
 
-			deltaWidth = zoomToo.imgWidth - (zoomToo.elementWidth)
-			adjustedWidth = zoomToo.elementWidth - (zoomToo.settings.lensWidth)
+			deltaWidth = @imgWidth - (@elementWidth)
+			adjustedWidth = @elementWidth - (@settings.lensWidth)
 
 			zoomTop = -deltaHeight / adjustedHeight * (currentMouseOffsetY - halfLensHeight)
 			zoomLeft = -deltaWidth / adjustedWidth * (currentMouseOffsetX - halfLensWidth)
 
-			zoomToo.newZoom.left = zoomLeft
-			zoomToo.newZoom.top = zoomTop
+			@newZoom.left = zoomLeft
+			@newZoom.top = zoomTop
 
 			return
 
 		cancelTimer: ->
-			zoomToo = this
-			clearTimeout zoomToo.moveImageTimer
+			clearTimeout @moveImageTimer
 			return
 
 		stopSlowMoveImage: ->
-			zoomToo = this
-			zoomToo.continueSlowMove = false
+			@continueSlowMove = false
 			return
 
 		mouseLeave: ->
-			zoomToo = this
-			$(zoomToo.img).stop().fadeTo(zoomToo.settings.showDuration, 0).promise().done zoomToo.stopSlowMoveImage
+			$(@img).stop().fadeTo(@settings.showDuration, 0).promise().done @stopSlowMoveImage
 			return
 
 		mouseEnter: (e) ->
-			zoomToo = this
 			currentMousePos =
 				x: e.pageX
 				y: e.pageY
-			zoomToo.calculateOffset currentMousePos
-			zoomToo.continueSlowMove = true
-			zoomToo.currentZoom.top = zoomToo.newZoom.top
-			zoomToo.currentZoom.left = zoomToo.newZoom.left
-			zoomToo.moveImage()
-			$(zoomToo.img).stop().fadeTo zoomToo.settings.showDuration, 1
+			@calculateOffset currentMousePos
+			@continueSlowMove = true
+			@currentZoom.top = @newZoom.top
+			@currentZoom.left = @newZoom.left
+			@moveImage()
+			$(@img).stop().fadeTo @settings.showDuration, 1
 			return
 
 		mouseMove: (e) ->
-			zoomToo = this
 			currentMousePos =
 				x: e.pageX
 				y: e.pageY
-			zoomToo.calculateOffset currentMousePos
-			zoomToo.cancelTimer()
-			zoomToo.continueSlowMove = true
-			zoomToo.slowMoveImage()
+			@calculateOffset currentMousePos
+			@cancelTimer()
+			@continueSlowMove = true
+			@slowMoveImage()
 			return
 
 		slowMoveImage: ->
-			zoomToo = this
 			delta =
 				left: 0
 				top: 0
@@ -159,37 +148,36 @@
 			reachedLeft = false
 			reachedTop = false
 
-			delta.left = zoomToo.newZoom.left - (zoomToo.currentZoom.left)
-			delta.top = zoomToo.newZoom.top - (zoomToo.currentZoom.top)
+			delta.left = @newZoom.left - (@currentZoom.left)
+			delta.top = @newZoom.top - (@currentZoom.top)
 
-			moveZoomPos.left = -delta.left / (zoomToo.settings.moveDuration / 100)
-			moveZoomPos.top = -delta.top / (zoomToo.settings.moveDuration / 100)
+			moveZoomPos.left = -delta.left / (@settings.moveDuration / 100)
+			moveZoomPos.top = -delta.top / (@settings.moveDuration / 100)
 
-			zoomToo.currentZoom.left = zoomToo.currentZoom.left - (moveZoomPos.left)
-			zoomToo.currentZoom.top = zoomToo.currentZoom.top - (moveZoomPos.top)
+			@currentZoom.left = @currentZoom.left - (moveZoomPos.left)
+			@currentZoom.top = @currentZoom.top - (moveZoomPos.top)
 
 			if Math.abs(delta.left) < 1
-				zoomToo.currentZoom.left = zoomToo.newZoom.left
+				@currentZoom.left = @newZoom.left
 				reachedLeft = true
 
 			if Math.abs(delta.top) < 1
-				zoomToo.currentZoom.top = zoomToo.newZoom.top
+				@currentZoom.top = @newZoom.top
 				reachedTop = true
 
-			zoomToo.moveImage()
+			@moveImage()
 
 			if reachedLeft and reachedTop
-				zoomToo.continueSlowMove = false
+				@continueSlowMove = false
 
-			if zoomToo.continueSlowMove == true
-				zoomToo.moveImageTimer = setTimeout($.proxy(zoomToo.slowMoveImage, zoomToo), 25)
+			if @continueSlowMove == true
+				@moveImageTimer = setTimeout($.proxy(@slowMoveImage, @), 25)
 
 			return
 
 		moveImage: ->
-			zoomToo = this
-			zoomToo.img.style.left = zoomToo.currentZoom.left + "px"
-			zoomToo.img.style.top = zoomToo.currentZoom.top + "px"
+			@img.style.left = @currentZoom.left + "px"
+			@img.style.top = @currentZoom.top + "px"
 			return
 
 	$.fn.zoomToo = (options) ->
