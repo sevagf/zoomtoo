@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>ZoomToo</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+		<script src="../src/jquery.zoomtoo.js"></script>
+		<style>
+			#picture-frame {
+				border: 1px red solid;
+				width: 640px;
+				height: 425px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="picture-frame">
+			<img src="../assets/cat_low_res.jpg" data-src="../assets/cat_high_res.jpg" />
+		</div>
+		<script>
+			$(function() {
+				$("#picture-frame").zoomToo();
+			});
+		</script>
+	</body>
+</html>
