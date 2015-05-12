@@ -1,4 +1,4 @@
-# ZoomToo [![Build Status](https://secure.travis-ci.org/sevagf/zoomtoo.svg?branch=master)](https://travis-ci.org/sevagf/zoomtoo) ![Bower Version](https://badge.fury.io/bo/jquery-boilerplate.svg)
+# ZoomToo [![Build Status](https://secure.travis-ci.org/sevagf/zoomtoo.svg?branch=master)](https://travis-ci.org/sevagf/zoomtoo) ![Bower Version](https://badge.fury.io/bo/jquery-boilerplate.svg) [![Code Climate](https://codeclimate.com/github/sevagf/zoomtoo/badges/gpa.svg)](https://codeclimate.com/github/sevagf/zoomtoo)
 
 ZoomToo is a jQuery plugin to show case your images with a magnifying lens when hovering.
 
