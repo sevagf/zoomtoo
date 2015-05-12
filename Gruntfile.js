@@ -17,20 +17,9 @@ module.exports = function(grunt) {
 				" */\n"
 		},
 
-		// Concat definitions
-		concat: {
-			dist: {
-				src: ["src/jquery.zoomtoo.js"],
-				dest: "dist/jquery.zoomtoo.js"
-			},
-			options: {
-				banner: "<%= meta.banner %>"
-			}
-		},
-
 		// Lint definitions
 		jshint: {
-			files: ["src/jquery.zoomtoo.js"],
+			files: ["dist/jquery.zoomtoo.js"],
 			options: {
 				jshintrc: ".jshintrc"
 			}
@@ -47,22 +36,32 @@ module.exports = function(grunt) {
 			}
 		},
 
-		// watch for changes to source
-		// Better than calling grunt a million times
-		// (call 'grunt watch')
+		// Watch for CoffeeScript code changes, then recompile
 		watch: {
 			files: ['src/*'],
-			tasks: ['default']
-		}
+			tasks: ['compile']
+		},
 
+		// Compile CoffeeScript to JS with source maps
+		coffee: {
+			compileWithMaps: {
+				options: {
+					sourceMap: true
+				},
+				files: {
+					'dist/jquery.zoomtoo.js': 'src/jquery.zoomtoo.coffee'
+				}
+			}
+		}
 	});
 
-	grunt.loadNpmTasks("grunt-contrib-concat");
 	grunt.loadNpmTasks("grunt-contrib-jshint");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-contrib-watch");
+	grunt.loadNpmTasks('grunt-contrib-coffee');
 
-	grunt.registerTask("default", ["jshint", "concat", "uglify"]);
+	grunt.registerTask("default", ["compile", "jshint", "uglify"]);
 	grunt.registerTask("travis", ["jshint"]);
+	grunt.registerTask("compile", ["coffee"]);
 
 };
