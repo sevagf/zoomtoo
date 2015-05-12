@@ -13,7 +13,10 @@
   "keywords": [
 	"jquery",
 	"plugin",
-	"zoomtoo"
+	"zoomtoo",
+	"zoom",
+	"image",
+	"hover"
   ],
   "license": "MIT",
   "private": false,
