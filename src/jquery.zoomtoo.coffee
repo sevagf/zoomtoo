@@ -18,9 +18,28 @@
 			img_src = nestedImage.data("src")
 			@element.one "zoomtoo.destroy", $.proxy(@destroy, @)
 			return unless img_src
+			@mouseOnElement = false
+			@imgLoaded = false
 			@img = new Image()
 			@img.src = img_src
-			@img.onload = $.proxy(@init, @, options)
+			@img.onload = $.proxy(@initImage, @)
+			@element.css(cursor: "wait")
+			@init(options)
+			return
+
+		initImage: ->
+			@imgLoaded = true
+			oldWidth = @imgWidth
+			oldHeight = @imgHeight
+			@imgWidth = @img.naturalWidth * @settings.magnify
+			@imgHeight = @img.naturalHeight * @settings.magnify
+			@currentZoom.left = @currentZoom.left - ((@imgWidth - oldWidth)/2)
+			@currentZoom.top = @currentZoom.top - ((@imgHeight - oldHeight)/2)
+			$(@img).css(width: @imgWidth, height: @imgHeight)
+
+			@element.css(cursor: "crosshair")
+			if @mouseOnElement
+				@fadeInImage()
 			return
 
 		init: (options) ->
@@ -30,8 +49,8 @@
 			@element.get(0).style.overflow = "hidden"
 			@elementWidth = @element.outerWidth()
 			@elementHeight = @element.outerHeight()
-			@imgWidth = @img.width * @settings.magnify
-			@imgHeight = @img.height * @settings.magnify
+			@imgWidth = @elementWidth
+			@imgHeight = @elementHeight
 			@elementOffset = @element.offset()
 			@newZoom =
 				left: 0
@@ -42,7 +61,6 @@
 			@moveImageTimer = 0
 			@continueSlowMove = false
 			@prepareElements()
-
 			return
 
 		prepareElements: ->
@@ -56,20 +74,17 @@
 				border: "none"
 				maxWidth: "none"
 				maxHeight: "none").appendTo @element
-			@element.css(cursor: "crosshair")
+			@element
 				.on("mouseenter.zoomtoo", $.proxy(@mouseEnter, @))
 				.on("mouseleave.zoomtoo", $.proxy(@mouseLeave, @))
 				.on "mousemove.zoomtoo", $.proxy(@mouseMove, @)
-
 			return
 
 		destroy: ->
 			@cancelTimer()
 			@element.off()
-
 			$(@img).remove()
 			@element.removeData "zoomtoo"
-
 			return
 
 		calculateOffset: (currentMousePos) ->
@@ -119,10 +134,12 @@
 			return
 
 		mouseLeave: ->
+			@mouseOnElement = false
 			$(@img).stop().fadeTo(@settings.showDuration, 0).promise().done @stopSlowMoveImage
 			return
 
 		mouseEnter: (e) ->
+			@mouseOnElement = true
 			currentMousePos =
 				x: e.pageX
 				y: e.pageY
@@ -131,6 +148,11 @@
 			@currentZoom.top = @newZoom.top
 			@currentZoom.left = @newZoom.left
 			@moveImage()
+			if @imgLoaded
+				@fadeInImage()
+			return
+
+		fadeInImage: ->
 			$(@img).stop().fadeTo @settings.showDuration, 1
 			return
 

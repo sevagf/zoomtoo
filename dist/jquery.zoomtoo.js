@@ -21,9 +21,35 @@
         if (!img_src) {
           return;
         }
+        this.mouseOnElement = false;
+        this.imgLoaded = false;
         this.img = new Image();
         this.img.src = img_src;
-        this.img.onload = $.proxy(this.init, this, options);
+        this.img.onload = $.proxy(this.initImage, this);
+        this.element.css({
+          cursor: "wait"
+        });
+        this.init(options);
+      },
+      initImage: function() {
+        var oldHeight, oldWidth;
+        this.imgLoaded = true;
+        oldWidth = this.imgWidth;
+        oldHeight = this.imgHeight;
+        this.imgWidth = this.img.naturalWidth * this.settings.magnify;
+        this.imgHeight = this.img.naturalHeight * this.settings.magnify;
+        this.currentZoom.left = this.currentZoom.left - ((this.imgWidth - oldWidth) / 2);
+        this.currentZoom.top = this.currentZoom.top - ((this.imgHeight - oldHeight) / 2);
+        $(this.img).css({
+          width: this.imgWidth,
+          height: this.imgHeight
+        });
+        this.element.css({
+          cursor: "crosshair"
+        });
+        if (this.mouseOnElement) {
+          this.fadeInImage();
+        }
       },
       init: function(options) {
         var position;
@@ -33,8 +59,8 @@
         this.element.get(0).style.overflow = "hidden";
         this.elementWidth = this.element.outerWidth();
         this.elementHeight = this.element.outerHeight();
-        this.imgWidth = this.img.width * this.settings.magnify;
-        this.imgHeight = this.img.height * this.settings.magnify;
+        this.imgWidth = this.elementWidth;
+        this.imgHeight = this.elementHeight;
         this.elementOffset = this.element.offset();
         this.newZoom = {
           left: 0,
@@ -60,9 +86,7 @@
           maxWidth: "none",
           maxHeight: "none"
         }).appendTo(this.element);
-        this.element.css({
-          cursor: "crosshair"
-        }).on("mouseenter.zoomtoo", $.proxy(this.mouseEnter, this)).on("mouseleave.zoomtoo", $.proxy(this.mouseLeave, this)).on("mousemove.zoomtoo", $.proxy(this.mouseMove, this));
+        this.element.on("mouseenter.zoomtoo", $.proxy(this.mouseEnter, this)).on("mouseleave.zoomtoo", $.proxy(this.mouseLeave, this)).on("mousemove.zoomtoo", $.proxy(this.mouseMove, this));
       },
       destroy: function() {
         this.cancelTimer();
@@ -108,10 +132,12 @@
         this.continueSlowMove = false;
       },
       mouseLeave: function() {
+        this.mouseOnElement = false;
         $(this.img).stop().fadeTo(this.settings.showDuration, 0).promise().done(this.stopSlowMoveImage);
       },
       mouseEnter: function(e) {
         var currentMousePos;
+        this.mouseOnElement = true;
         currentMousePos = {
           x: e.pageX,
           y: e.pageY
@@ -121,6 +147,11 @@
         this.currentZoom.top = this.newZoom.top;
         this.currentZoom.left = this.newZoom.left;
         this.moveImage();
+        if (this.imgLoaded) {
+          this.fadeInImage();
+        }
+      },
+      fadeInImage: function() {
         $(this.img).stop().fadeTo(this.settings.showDuration, 1);
       },
       mouseMove: function(e) {
