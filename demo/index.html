@@ -7,20 +7,43 @@
 		<style>
 			#picture-frame {
 				border: 1px red solid;
-				width: 640px;
-				height: 425px;
+				width: 460px;
+				height: 460px;
+			}
+			.thumb {
+				display: inline-block;
+				cursor: pointer;
 			}
 		</style>
 	</head>
 	<body>
-		<div id="picture-frame">
-			<img src="img/cat_low_res.jpg" data-src="img/cat_high_res.jpg" />
+		<div id="picture-frame" data-src="img/cat1_high_res.jpg">
+			<img id="showcase" src="img/cat1_low_res.jpg" />
 		</div>
+
+		<div class="thumb" data-src-showcase="img/cat1_low_res.jpg" data-src="img/cat1_high_res.jpg">
+			<img src="img/cat1_thumb.jpg">
+		</div>
+
+		<div class="thumb" data-src-showcase="img/cat2_low_res.jpg" data-src="img/cat2_high_res.jpg">
+			<img src="img/cat2_thumb.jpg">
+		</div>
+
+		<div class="thumb" data-src-showcase="img/cat3_low_res.jpg" data-src="img/cat3_high_res.jpg">
+			<img src="img/cat3_thumb.jpg">
+		</div>
+
 		<script>
 			$(function() {
-				$("#picture-frame").zoomToo({
-					magnify: 1
+				$('#picture-frame').zoomToo();
+
+				$('.thumb').click(function(){
+					$('#picture-frame').trigger('zoomtoo.destroy');
+					$('#showcase').attr('src', $(this).data('src-showcase'));
+					$('#picture-frame').attr('data-src', $(this).data('src'));
+					$('#picture-frame').zoomToo();
 				});
+
 			});
 		</script>
 	</body>

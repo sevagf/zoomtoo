@@ -14,13 +14,13 @@
     };
     ZoomToo.prototype = {
       load: function(options) {
-        var img_src, nestedImage;
-        nestedImage = this.element.find("img").first();
-        img_src = nestedImage.data("src");
+        var img_src;
+        img_src = this.element.attr("data-src");
         this.element.one("zoomtoo.destroy", $.proxy(this.destroy, this));
         if (!img_src) {
           return;
         }
+        this.destroyed = false;
         this.mouseOnElement = false;
         this.imgLoaded = false;
         this.img = new Image();
@@ -33,6 +33,9 @@
       },
       initImage: function() {
         var oldHeight, oldWidth;
+        if (this.destroyed) {
+          return;
+        }
         this.imgLoaded = true;
         oldWidth = this.imgWidth;
         oldHeight = this.imgHeight;
@@ -93,6 +96,7 @@
         this.element.off();
         $(this.img).remove();
         this.element.removeData("zoomtoo");
+        this.destroyed = true;
       },
       calculateOffset: function(currentMousePos) {
         var adjustedHeight, adjustedWidth, currentMouseOffsetX, currentMouseOffsetY, deltaHeight, deltaWidth, halfLensHeight, halfLensWidth, lensBottom, lensLeft, lensRight, lensTop, zoomLeft, zoomTop;

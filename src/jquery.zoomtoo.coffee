@@ -14,10 +14,10 @@
 
 	ZoomToo.prototype =
 		load: (options) ->
-			nestedImage = @element.find("img").first()
-			img_src = nestedImage.data("src")
+			img_src = @element.attr("data-src")
 			@element.one "zoomtoo.destroy", $.proxy(@destroy, @)
 			return unless img_src
+			@destroyed = false
 			@mouseOnElement = false
 			@imgLoaded = false
 			@img = new Image()
@@ -28,6 +28,7 @@
 			return
 
 		initImage: ->
+			return if @destroyed
 			@imgLoaded = true
 			oldWidth = @imgWidth
 			oldHeight = @imgHeight
@@ -85,6 +86,7 @@
 			@element.off()
 			$(@img).remove()
 			@element.removeData "zoomtoo"
+			@destroyed = true
 			return
 
 		calculateOffset: (currentMousePos) ->
