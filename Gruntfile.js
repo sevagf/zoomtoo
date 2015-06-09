@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 				" *\n" +
 				" *  Made by <%= pkg.author.name %>\n" +
 				" *  Under <%= pkg.licenses[0].type %> License\n" +
-				" */\n"
+				" */"
 		},
 
 		// Lint definitions
@@ -32,24 +32,35 @@ module.exports = function(grunt) {
 				dest: "dist/jquery.zoomtoo.min.js"
 			},
 			options: {
-				banner: "<%= meta.banner %>"
+				sourceMap: true,
+				sourceMapName: "dist/jquery.zoomtoo.js.map"
+			}
+		},
+
+		// Add banner to the top of each file
+		usebanner: {
+			dist: {
+				options: {
+					position: "top",
+					banner: "<%= meta.banner %>"
+				},
+				files: {
+					src: [ "dist/jquery.zoomtoo.js", "dist/jquery.zoomtoo.min.js" ]
+				}
 			}
 		},
 
 		// Watch for CoffeeScript code changes, then recompile
 		watch: {
-			files: ['src/*'],
-			tasks: ['compile']
+			files: ["src/*"],
+			tasks: ["compile"]
 		},
 
 		// Compile CoffeeScript to JS with source maps
 		coffee: {
-			compileWithMaps: {
-				options: {
-					sourceMap: true
-				},
+			compile: {
 				files: {
-					'dist/jquery.zoomtoo.js': 'src/jquery.zoomtoo.coffee'
+					"dist/jquery.zoomtoo.js": "src/jquery.zoomtoo.coffee"
 				}
 			}
 		}
@@ -58,9 +69,10 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-contrib-jshint");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-contrib-watch");
-	grunt.loadNpmTasks('grunt-contrib-coffee');
+	grunt.loadNpmTasks("grunt-contrib-coffee");
+	grunt.loadNpmTasks("grunt-banner");
 
-	grunt.registerTask("default", ["compile", "jshint", "uglify"]);
+	grunt.registerTask("default", ["compile", "jshint", "uglify", "usebanner"]);
 	grunt.registerTask("travis", ["jshint"]);
 	grunt.registerTask("compile", ["coffee"]);
 

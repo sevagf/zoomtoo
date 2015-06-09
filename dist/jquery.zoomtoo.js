@@ -1,3 +1,11 @@
+/*
+ *  jQuery ZoomToo - v1.0.1
+ *  Showcase your images with a magnifying lens on hover
+ *  https://github.com/sevagf/zoomtoo
+ *
+ *  Made by Sevag Frankian
+ *  Under MIT License
+ */
 (function() {
   (function($) {
     var ZoomToo;
@@ -220,5 +228,3 @@
   })(window.jQuery);
 
 }).call(this);
-
-//# sourceMappingURL=jquery.zoomtoo.js.map
